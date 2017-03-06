@@ -1,6 +1,6 @@
 macroscript MultiSlicer category: "Montelo Tools"
 (
-	try(DestroyDialog MultiSlicerDialog)catch();
+	try(DestroyDialog MultiSlicerDialog) catch();
 
 	Rollout MultiSlicerDialog "Multi Slicer"
 	(
@@ -70,6 +70,10 @@ macroscript MultiSlicer category: "Montelo Tools"
 			
 		)
 		
+		on MultiSlicerDialog open do
+		(
+			print MultiSlicerDialog;
+		)
 		
 		on MultiSlicerDialog close do
 		(
