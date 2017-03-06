@@ -1,6 +1,8 @@
 macroscript MultiSlicer category: "Montelo Tools"
 (
 	try(DestroyDialog MultiSlicerDialog) catch();
+	
+	local selectionButtonText = "Select Object and Click";
 
 	Rollout MultiSlicerDialog "Multi Slicer"
 	(
@@ -10,7 +12,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 		
 		group "Object Selection" 
 		(
-			button objectSelectionButton "Select Object and Click";
+			button objectSelectionButton selectionButtonText;
 			label objectSelectionLabel "";
 		)
 		
@@ -35,9 +37,25 @@ macroscript MultiSlicer category: "Montelo Tools"
 		----------------------------------------------------[CALLBACKS]--------------------------------------------
 		---------------------------------------------------------------------------------------------------------------
 		
+		---------------------
+		----VARIABLES---
+		---------------------
+		
+		local selectedObject = undefined;
+		local isSelecting       = false;
+		
 		on objectSelectionButton pressed do
 		(
-			
+			if selection.count == 1 then
+			(
+				selectedObject = selection[1];
+				objectSelectionButton.text = selectedObject.name;
+				print selectedObject;
+			) else (
+				selectedObject = undefined;
+				objectSelectionButton.text = selectionButtonText;
+				print selectedObject;
+			)
 		)
 		
 		on slicingAxys changed toNewValue do
@@ -72,7 +90,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 		
 		on MultiSlicerDialog open do
 		(
-			print MultiSlicerDialog;
+			
 		)
 		
 		on MultiSlicerDialog close do
