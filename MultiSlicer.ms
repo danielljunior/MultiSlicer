@@ -12,7 +12,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 		
 		group "Object Selection" 
 		(
-			button objectSelectionButton selectionButtonText;
+			button objectSelectionButton selectionButtonText height:25 width:200;
 			label objectSelectionLabel "";
 		)
 		
