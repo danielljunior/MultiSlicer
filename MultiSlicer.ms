@@ -49,12 +49,16 @@ macroscript MultiSlicer category: "Montelo Tools"
 			if selection.count == 1 then
 			(
 				selectedObject = selection[1];
+				isSelecting = true;
 				objectSelectionButton.text = selectedObject.name;
 				print selectedObject;
+				print isSelecting;
 			) else (
 				selectedObject = undefined;
 				objectSelectionButton.text = selectionButtonText;
+				isSelecting = false;
 				print selectedObject;
+				print isSelecting;
 			)
 		)
 		
