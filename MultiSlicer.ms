@@ -22,7 +22,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 			
 			spinner slicePlacementSpinner "Slicing Placement" range:[0, 100, 50] type:#float height:25;
 			
-			spinner slicingDistance "Slicing Distance" range:[0,131072, 16] type:#worldunits height:25;
+			spinner slicingInterval "Slicing Distance" range:[0,131072, 16] type:#worldunits height:25;
 			
 			checkbox constraintCheckBox "Constrained" align:#center;
 			
@@ -35,18 +35,13 @@ macroscript MultiSlicer category: "Montelo Tools"
 		----------------------------------------------------[CALLBACKS]--------------------------------------------
 		---------------------------------------------------------------------------------------------------------------
 		
-		on slicingAxys changed toNewValue do
-		(
-			
-		)
-		
 		on objectSelectionButton pressed do
 		(
 			
 		)
 		
-		on sliceItButton pressed do
-		(			
+		on slicingAxys changed toNewValue do
+		(
 			
 		)
 		
@@ -55,8 +50,23 @@ macroscript MultiSlicer category: "Montelo Tools"
 			
 		)
 		
+		on slicingInterval changed toNewValue do
+		(
+			
+		)
+		
 		on constraintCheckBox changed toNewValue do
 		(
+			
+		)
+		
+		on slicingCount changed toNewValue do
+		(
+			
+		)
+		
+		on sliceItButton pressed do
+		(			
 			
 		)
 		
