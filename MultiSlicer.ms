@@ -2,7 +2,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 (
 	try(DestroyDialog MultiSlicerDialog) catch();
 	
-	local selectionButtonText = "Select Object and Click";
+	local objectSelectionButtonText = "Select Object and Click";
 
 	Rollout MultiSlicerDialog "Multi Slicer"
 	(
@@ -12,7 +12,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 		
 		group "Object Selection" 
 		(
-			button objectSelectionButton selectionButtonText height:25 width:200;
+			button objectSelectionButton objectSelectionButtonText height:25 width:200;
 			label objectSelectionLabel "";
 		)
 		
@@ -42,23 +42,22 @@ macroscript MultiSlicer category: "Montelo Tools"
 		---------------------
 		
 		local selectedObject = undefined;
-		local isSelecting       = false;
+		
+		function checkSelection =
+		(
+			isSelected = selectedObject != undefined
+			isSelected;
+		);
 		
 		on objectSelectionButton pressed do
 		(
 			if selection.count == 1 then
 			(
 				selectedObject = selection[1];
-				isSelecting = true;
 				objectSelectionButton.text = selectedObject.name;
-				print selectedObject;
-				print isSelecting;
 			) else (
 				selectedObject = undefined;
-				objectSelectionButton.text = selectionButtonText;
-				isSelecting = false;
-				print selectedObject;
-				print isSelecting;
+				objectSelectionButton.text = objectSelectionButtonText;
 			)
 		)
 		
