@@ -3,6 +3,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 	try(DestroyDialog MultiSlicerDialog) catch();
 	
 	local objectSelectionButtonText = "Select Object and Click";
+	local slicingOrientation = #((quat 0 0.707107 0 0.707107),(quat -0.707107 0 0 0.707107),(quat 0 0 0 1))
 
 	Rollout MultiSlicerDialog "Multi Slicer"
 	(
@@ -20,7 +21,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 		(
 			label slicingAxysLabel "Slicing Axys";
 			
-			radiobuttons slicingAxys labels:#("X","Y","Z") height:25;
+			radiobuttons slicingAxysRadio labels:#("X","Y","Z") height:25;
 			
 			spinner slicePlacementSpinner "Slicing Placement" range:[0, 100, 50] type:#float height:25;
 			
@@ -42,26 +43,53 @@ macroscript MultiSlicer category: "Montelo Tools"
 		---------------------
 		
 		local selectedObject = undefined;
+		local slicingAxys = slicingAxysRadio.state;
+		local slicingPath = [0,0,0];
 		
-		function checkSelection =
+		function isSelecting =
 		(
-			isSelected = selectedObject != undefined
-			isSelected;
+			selectedObject != undefined
 		);
 		
+		function evaluateSlicingPath = 
+		(
+			if isSelecting() do
+			(
+				slicingPathDistance = [0,0,0];
+				for index = 1 to 3 do
+				(
+					slicingPathDistance[index] = selectedObject.max[index] - selectedObject.min[index];
+				)
+				slicingPathDistance;
+			)
+		)
+		
+		function addSlice = 
+		(
+			if isSelecting() do
+			(
+				addModifier selectedObject SliceModifier;
+				selectedObject.modifiers[1].Slice_Plane.rotation = slicingOrientation[slicingAxys];
+			)
+		)
+
 		on objectSelectionButton pressed do
 		(
 			if selection.count == 1 then
 			(
 				selectedObject = selection[1];
 				objectSelectionButton.text = selectedObject.name;
+				slicingPath = evaluateSlicingPath();
+				
+				print slicingPath;
 			) else (
 				selectedObject = undefined;
 				objectSelectionButton.text = objectSelectionButtonText;
+				slicingPath = [0,0,0];
 			)
 		)
 		
-		on slicingAxys changed toNewValue do
+		on slicingAxysRadio changed toNewValue do
 		(
 			
 		)
