@@ -44,8 +44,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 		
 		local selectedObject = undefined;
 		local slicingAxys = & slicingAxysRadio.state;
-		local slicingPath = [0,0,0];
-		local slicingPlacement = slicePlacementSpinner.value / 100;
+		local slicingPathLength = [0,0,0];
 		local slicingCount = slicingCountSpinner.value;
 		local slicingInterval = slicingIntervalSpinner.value;
 		
@@ -54,7 +53,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 			selectedObject != undefined
 		);
 		
-		function evaluateSlicingPath = 
+		function evaluateSlicingPathLength = 
 		(
 			if isSelecting() do
 			(
@@ -67,10 +66,15 @@ macroscript MultiSlicer category: "Montelo Tools"
 			)
 		);
 		
+		function evaluateSlicePlacement =
+		(
+			slicePlacementSpinner.value / 100;
+		)
+		
 		function evaluateSlicingPosition = 
 		(
 			slicingPosition = [0,0,0];
-			slicingPosition[*slicingAxys] = selectedObject.min[*slicingAxys] + (slicingPath[*slicingAxys] * slicingPlacement);
+			slicingPosition[*slicingAxys] = (slicingPathLength[*slicingAxys] * evaluateSlicePlacement()) + selectedObject.min[*slicingAxys];
 			slicingPosition;
 		);
 		
@@ -80,7 +84,8 @@ macroscript MultiSlicer category: "Montelo Tools"
 			(
 				addModifier selectedObject (SliceModifier());
 				selectedObject.modifiers[1].Slice_Plane.rotation = slicingOrientation[*slicingAxys];
-				--selectedObject.modifiers[1].Slice_Plane.pos = evaluateSlicingPosition();
+				print (evaluateSlicingPosition());
+				selectedObject.modifiers[1].Slice_Plane.pos = evaluateSlicingPosition();
 			)
 		);
 		
@@ -95,11 +100,11 @@ macroscript MultiSlicer category: "Montelo Tools"
 			(
 				selectedObject = selection[1];
 				objectSelectionButton.text = selectedObject.name;
-				slicingPath = evaluateSlicingPath();
+				slicingPathLength = evaluateSlicingPathLength();
 			) else (
 				selectedObject = undefined;
 				objectSelectionButton.text = objectSelectionButtonText;
-				slicingPath = [0,0,0];
+				slicingPathLength = [0,0,0];
 			)
 		)
 		
