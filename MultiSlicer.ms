@@ -33,6 +33,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 		)
 		
 		button sliceItButton "Slice It!" height:35 width:200;
+		button debugButton "Debug It!" height:25 width:200;
 		
 		---------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------[CALLBACKS]--------------------------------------------
@@ -52,6 +53,16 @@ macroscript MultiSlicer category: "Montelo Tools"
 		(
 			selectedObject != undefined
 		);
+		
+		function hasModifiers =
+		(
+			if selectedObject != undefined then
+			(
+				selectedObject.modifiers.count > 0;
+			) else (
+			false
+			)
+		)
 		
 		function evaluateSlicingPathLength = 
 		(
@@ -84,15 +95,23 @@ macroscript MultiSlicer category: "Montelo Tools"
 			(
 				addModifier selectedObject (SliceModifier());
 				selectedObject.modifiers[1].Slice_Plane.rotation = slicingOrientation[*slicingAxys];
-				print (evaluateSlicingPosition());
 				selectedObject.modifiers[1].Slice_Plane.pos = evaluateSlicingPosition();
 			)
 		);
 		
 		function clearModifiers =
 		(
-			
-		)
+			if hasModifiers() do
+			(
+				modifiersCount = selectedObject.modifiers.count;
+				suspendEditing();
+				for index = 1 to modifiersCount do
+				(
+					deleteModifier selectedObject 1;
+				)
+				resumeEditing();
+			)
+		);
 			
 		on objectSelectionButton pressed do
 		(
@@ -144,6 +163,11 @@ macroscript MultiSlicer category: "Montelo Tools"
 		)
 		
 		on MultiSlicerDialog close do
+		(
+			clearModifiers();
+		)
+		
+		on debugButton pressed do
 		(
 			
 		)
