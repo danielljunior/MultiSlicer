@@ -51,7 +51,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 		
 		function isSelecting =
 		(
-			selectedObject != undefined
+			(selectedObject != undefined and isValidNode selectedObject);
 		);
 		
 		function hasModifiers =
@@ -62,14 +62,6 @@ macroscript MultiSlicer category: "Montelo Tools"
 			) else (
 			false
 			)
-		);
-		
-		function warnNoSelection = 
-		(
-			if (not isSelecting()) do
-			(
-				messageBox("No object selected!");
-			);
 		);
 		
 		function evaluateSlicingPathLength = 
@@ -83,6 +75,31 @@ macroscript MultiSlicer category: "Montelo Tools"
 				)
 				slicingPathDistance;
 			)
+		);
+		
+		function setSliceDialogBox =
+		(
+			selectedObject = selection[1];
+			objectSelectionButton.text = selectedObject.name;
+			slicingPathLength = evaluateSlicingPathLength();
+			previousModifiersCount = selectedObject.modifiers.count;
+		)
+		
+		function resetSliceDialogBox = 
+		(
+			selectedObject = undefined;
+			objectSelectionButton.text = objectSelectionButtonText;
+			slicingPathLength = [0,0,0];
+			previousModifiersCount = 0;
+		)
+		
+		function warnNoSelection = 
+		(
+			if (not isSelecting()) do
+			(
+				messageBox("No object selected!");
+				resetSliceDialogBox();
+			);
 		);
 		
 		function evaluateSlicePlacement =
@@ -147,15 +164,9 @@ macroscript MultiSlicer category: "Montelo Tools"
 		(
 			if selection.count == 1 then
 			(
-				selectedObject = selection[1];
-				objectSelectionButton.text = selectedObject.name;
-				slicingPathLength = evaluateSlicingPathLength();
-				previousModifiersCount = selectedObject.modifiers.count;
+				setSliceDialogBox();
 			) else (
-				selectedObject = undefined;
-				objectSelectionButton.text = objectSelectionButtonText;
-				slicingPathLength = [0,0,0];
-				previousModifiersCount = 0;
+				resetSliceDialogBox();
 			)
 		)
 		
