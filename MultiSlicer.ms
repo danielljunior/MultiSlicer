@@ -29,7 +29,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 			
 			checkbox constraintCheckBox "Constrained" align:#center;
 			
-			spinner slicingCountSpinner "Slicing Count" range:[1,16384, 2] type:#integer height:25 enabled:false;
+			spinner slicingConstrainedCountSpinner "Slicing Count" range:[1,16384, 2] type:#integer height:25 enabled:false;
 		)
 		
 		button sliceItButton "Slice It!" height:35 width:200;
@@ -46,8 +46,8 @@ macroscript MultiSlicer category: "Montelo Tools"
 		local selectedObject = undefined;
 		local slicingAxys = & slicingAxysRadio.state;
 		local slicingPathLength = [0,0,0];
-		local slicingCount = slicingCountSpinner.value;
-		local slicingInterval = slicingIntervalSpinner.value;
+		local slicingConstrainedCount = slicingConstrainedCountSpinner.value;
+		local slicingInterval = & slicingIntervalSpinner.value;
 		
 		function isSelecting =
 		(
@@ -62,7 +62,15 @@ macroscript MultiSlicer category: "Montelo Tools"
 			) else (
 			false
 			)
-		)
+		);
+		
+		function warnNoSelection = 
+		(
+			if (not isSelecting()) do
+			(
+				messageBox("No object selected!");
+			);
+		);
 		
 		function evaluateSlicingPathLength = 
 		(
@@ -82,21 +90,15 @@ macroscript MultiSlicer category: "Montelo Tools"
 			slicePlacementSpinner.value / 100;
 		)
 		
-		function evaluateSlicingPosition = 
+		function evaluateSlicingPosition indexInterval: selectedObject.modifiers.count = 
 		(
 			slicingPosition = [0,0,0];
+			additionalSlicingInterval = (*slicingInterval) * (indexInterval - 1);
+			
 			slicingPosition[*slicingAxys] = (slicingPathLength[*slicingAxys] * evaluateSlicePlacement()) + selectedObject.min[*slicingAxys];
+			slicingPosition[*slicingAxys] += 	additionalSlicingInterval;
+			
 			slicingPosition;
-		);
-		
-		function addSlice = 
-		(
-			if isSelecting() do
-			(
-				addModifier selectedObject (SliceModifier());
-				selectedObject.modifiers[1].Slice_Plane.rotation = slicingOrientation[*slicingAxys];
-				selectedObject.modifiers[1].Slice_Plane.pos = evaluateSlicingPosition();
-			)
 		);
 		
 		function clearModifiers =
@@ -112,6 +114,34 @@ macroscript MultiSlicer category: "Montelo Tools"
 				resumeEditing();
 			)
 		);
+		
+		function addSlice = 
+		(
+			if isSelecting() do
+			(
+				addModifier selectedObject (SliceModifier());
+				selectedObject.modifiers[1].Slice_Plane.rotation = slicingOrientation[*slicingAxys];
+				selectedObject.modifiers[1].Slice_Plane.pos = evaluateSlicingPosition();
+			)
+		);
+		
+		function iterateSlice =
+		(
+			if isSelecting() do
+			(
+				clearModifiers();
+			
+				slicingCount = slicingPathLength[*slicingAxys] - ( slicingPathLength[*slicingAxys] * evaluateSlicePlacement() );
+				slicingCount = (slicingCount /  *slicingInterval) as integer;
+			
+				suspendEditing();
+				for i = 0 to slicingCount do
+				(
+					addSlice();
+				)
+				resumeEditing();
+			)
+		)
 			
 		on objectSelectionButton pressed do
 		(
@@ -147,14 +177,15 @@ macroscript MultiSlicer category: "Montelo Tools"
 			
 		)
 		
-		on slicingCountSpinner changed toNewValue do
+		on slicingConstrainedCountSpinner changed toNewValue do
 		(
 			
 		)
 		
 		on sliceItButton pressed do
 		(			
-			addSlice();
+			warnNoSelection();
+			iterateSlice();
 		)
 		
 		on MultiSlicerDialog open do
