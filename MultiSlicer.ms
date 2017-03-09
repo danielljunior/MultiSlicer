@@ -33,7 +33,6 @@ macroscript MultiSlicer category: "Montelo Tools"
 		)
 		
 		button sliceItButton "Slice It!" height:35 width:200;
-		button debugButton "Debug It!" height:25 width:200;
 		
 		---------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------[CALLBACKS]--------------------------------------------
@@ -48,6 +47,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 		local slicingPathLength = [0,0,0];
 		local slicingConstrainedCount = slicingConstrainedCountSpinner.value;
 		local slicingInterval = & slicingIntervalSpinner.value;
+		local previousModifiersCount = 0;
 		
 		function isSelecting =
 		(
@@ -88,9 +88,9 @@ macroscript MultiSlicer category: "Montelo Tools"
 		function evaluateSlicePlacement =
 		(
 			slicePlacementSpinner.value / 100;
-		)
+		);
 		
-		function evaluateSlicingPosition indexInterval: selectedObject.modifiers.count = 
+		function evaluateSlicingPosition indexInterval: (selectedObject.modifiers.count - previousModifiersCount) = 
 		(
 			slicingPosition = [0,0,0];
 			additionalSlicingInterval = (*slicingInterval) * (indexInterval - 1);
@@ -105,7 +105,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 		(
 			if hasModifiers() do
 			(
-				modifiersCount = selectedObject.modifiers.count;
+				modifiersCount = selectedObject.modifiers.count - previousModifiersCount;
 				suspendEditing();
 				for index = 1 to modifiersCount do
 				(
@@ -150,10 +150,12 @@ macroscript MultiSlicer category: "Montelo Tools"
 				selectedObject = selection[1];
 				objectSelectionButton.text = selectedObject.name;
 				slicingPathLength = evaluateSlicingPathLength();
+				previousModifiersCount = selectedObject.modifiers.count;
 			) else (
 				selectedObject = undefined;
 				objectSelectionButton.text = objectSelectionButtonText;
 				slicingPathLength = [0,0,0];
+				previousModifiersCount = 0;
 			)
 		)
 		
@@ -196,11 +198,6 @@ macroscript MultiSlicer category: "Montelo Tools"
 		on MultiSlicerDialog close do
 		(
 			clearModifiers();
-		)
-		
-		on debugButton pressed do
-		(
-			
 		)
 		
 	)
