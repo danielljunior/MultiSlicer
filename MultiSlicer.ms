@@ -49,6 +49,11 @@ macroscript MultiSlicer category: "Montelo Tools"
 		local slicingInterval = & slicingIntervalSpinner.value;
 		local previousModifiersCount = 0;
 		
+		function isConstrained =
+		(
+			constraintCheckBox.checked;
+		)
+		
 		function isSelecting =
 		(
 			(selectedObject != undefined and isValidNode selectedObject);
@@ -83,7 +88,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 			objectSelectionButton.text = selectedObject.name;
 			slicingPathLength = evaluateSlicingPathLength();
 			previousModifiersCount = selectedObject.modifiers.count;
-		)
+		);
 		
 		function resetSliceDialogBox = 
 		(
@@ -91,7 +96,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 			objectSelectionButton.text = objectSelectionButtonText;
 			slicingPathLength = [0,0,0];
 			previousModifiersCount = 0;
-		)
+		);
 		
 		function warnNoSelection = 
 		(
@@ -150,7 +155,12 @@ macroscript MultiSlicer category: "Montelo Tools"
 			
 				slicingCount = slicingPathLength[*slicingAxys] - ( slicingPathLength[*slicingAxys] * evaluateSlicePlacement() );
 				slicingCount = (slicingCount /  *slicingInterval) as integer;
-			
+				
+				if isConstrained() do
+				(
+					slicingCount = slicingConstrainedCount;
+				)
+				
 				suspendEditing();
 				for i = 0 to slicingCount do
 				(
@@ -158,7 +168,7 @@ macroscript MultiSlicer category: "Montelo Tools"
 				)
 				resumeEditing();
 			)
-		)
+		);
 			
 		on objectSelectionButton pressed do
 		(
@@ -187,12 +197,15 @@ macroscript MultiSlicer category: "Montelo Tools"
 		
 		on constraintCheckBox changed toNewValue do
 		(
-			
+			slicingConstrainedCountSpinner.enabled = toNewValue;
+			slicingConstrainedCount = slicingConstrainedCountSpinner.value;
+			print slicingConstrainedCount;
 		)
 		
 		on slicingConstrainedCountSpinner changed toNewValue do
 		(
-			
+			slicingConstrainedCount = toNewValue;
+			print slicingConstrainedCount;
 		)
 		
 		on sliceItButton pressed do
