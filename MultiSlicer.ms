@@ -156,13 +156,13 @@ macroscript MultiSlicer category: "Montelo Tools"
 				slicingCount = slicingPathLength[*slicingAxys] - ( slicingPathLength[*slicingAxys] * evaluateSlicePlacement() );
 				slicingCount = (slicingCount /  *slicingInterval) as integer;
 				
-				if isConstrained() do
+				if (isConstrained() and slicingConstrainedCount < slicingCount)  do
 				(
 					slicingCount = slicingConstrainedCount;
 				)
 				
 				suspendEditing();
-				for i = 0 to slicingCount do
+				for i = 1 to slicingCount do
 				(
 					addSlice();
 				)
