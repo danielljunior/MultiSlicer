@@ -1,3 +1,5 @@
+--Multi Slicer | version 1.0;
+
 macroscript MultiSlicer category: "Montelo Tools"
 (
 	try DestroyDialog MultiSlicerDialog catch()
